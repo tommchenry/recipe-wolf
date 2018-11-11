@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_11_162035) do
+ActiveRecord::Schema.define(version: 2018_11_11_175042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,30 @@ ActiveRecord::Schema.define(version: 2018_11_11_162035) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "recipes", force: :cascade do |t|
+    t.string "title"
+    t.integer "estimated_time"
+    t.text "instructions"
+  end
+
+  create_table "recipes_ingredients", force: :cascade do |t|
+    t.integer "recipe_id"
+    t.integer "ingredient_id"
+  end
+
+  create_table "recipes_tags", force: :cascade do |t|
+    t.integer "recipe_id"
+    t.integer "tag_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
   end
 
 end

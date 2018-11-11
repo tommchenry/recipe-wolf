@@ -1,6 +1,8 @@
 class RecipesIngredients < ActiveRecord::Migration[5.2]
   def change
-    t.integer :recipe_id
-    t.integer :ingredient_id
+    create_table :recipes_ingredients do |t|
+      t.integer :recipe_id
+      t.integer :ingredient_id
+    end
   end
 end
