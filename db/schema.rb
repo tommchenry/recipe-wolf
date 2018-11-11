@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_11_175042) do
+ActiveRecord::Schema.define(version: 2018_11_11_181358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,20 +45,24 @@ ActiveRecord::Schema.define(version: 2018_11_11_175042) do
     t.string "name"
   end
 
+  create_table "ingredients_recipes", id: false, force: :cascade do |t|
+    t.bigint "recipe_id", null: false
+    t.bigint "ingredient_id", null: false
+    t.index ["ingredient_id", "recipe_id"], name: "index_ingredients_recipes_on_ingredient_id_and_recipe_id"
+    t.index ["recipe_id", "ingredient_id"], name: "index_ingredients_recipes_on_recipe_id_and_ingredient_id"
+  end
+
   create_table "recipes", force: :cascade do |t|
     t.string "title"
     t.integer "estimated_time"
     t.text "instructions"
   end
 
-  create_table "recipes_ingredients", force: :cascade do |t|
-    t.integer "recipe_id"
-    t.integer "ingredient_id"
-  end
-
-  create_table "recipes_tags", force: :cascade do |t|
-    t.integer "recipe_id"
-    t.integer "tag_id"
+  create_table "recipes_tags", id: false, force: :cascade do |t|
+    t.bigint "recipe_id", null: false
+    t.bigint "tag_id", null: false
+    t.index ["recipe_id", "tag_id"], name: "index_recipes_tags_on_recipe_id_and_tag_id"
+    t.index ["tag_id", "recipe_id"], name: "index_recipes_tags_on_tag_id_and_recipe_id"
   end
 
   create_table "tags", force: :cascade do |t|
