@@ -40,15 +40,15 @@ class App extends Component {
     let {recipes, recipe} = this.state
     return recipes
       ? <Container text>
-        <Header as='h2' icon textAlign='center' color='teal'>
-          <Icon name='unordered list' circular />
+        <Header as='h2' icon textAlign='center' color='orange'>
+          <Icon name='utensils' circular />
           <Header.Content>
-            List of Ingredients
+            Recipe Wolf
           </Header.Content>
         </Header>
         <Divider hidden section />
         {recipes && recipes.length
-          ? <Button.Group color='teal' fluid widths={recipes.length}>
+          ? <Button.Group vertical color='orange' fluid widths={recipes.length}>
             {Object.keys(recipes).map((key) => {
               return <Button active={recipe && recipe.id === recipes[key].id} fluid key={key} onClick={() => this.getRecipe(recipes[key].id)}>
                 {recipes[key].title}
@@ -62,12 +62,12 @@ class App extends Component {
           <Container>
             <Header as='h2'>{recipe.title}</Header>
             {recipe.estimated_time && <p>{recipe.estimated_time} minutes</p>}
-            {recipe.instructions && <p>{recipe.instructions}</p>}
             {recipe.ingredients &&
               <Segment.Group>
-                {recipe.ingredients.map((ingredient, i) => <Segment key={i}>{ingredient.instructions}</Segment>)}
+                {recipe.ingredients.map((ingredient, i) => <Segment key={i}>{ingredient.name}</Segment>)}
               </Segment.Group>
             }
+            {recipe.instructions && <p>{recipe.instructions}</p>}
           </Container>
         }
       </Container>
