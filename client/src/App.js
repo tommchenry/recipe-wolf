@@ -5,12 +5,11 @@ class App extends Component {
   constructor () {
     super()
     this.state = {}
-    this.getRecipes = this.getRecipes.bind(this)
-    this.getRecipe = this.getRecipe.bind(this)
+    this.getTags = this.getTags.bind(this)
   }
 
   componentDidMount () {
-    this.getRecipes()
+    this.getTags()
   }
 
   fetch (endpoint) {
@@ -19,16 +18,21 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
-  getRecipes () {
-    this.fetch('/api/recipes')
-      .then(recipes => {
-        if (recipes.length) {
-          this.setState({recipes: recipes})
-          this.getRecipe(recipes[0].id)
+  getTags () {
+    this.fetch('/api/tags')
+      .then(tags => {
+        if (tags.length) {
+          this.setState({tags: tags})
         } else {
-          this.setState({recipes: []})
+          this.setState({tags: []})
         }
       })
+  }
+
+  getTag (id) {
+    this.fetch(`/api/tags/${id}`)
+      .then(tag => this.setState({tag: tag}))
+    this.setState({recipe: ""})
   }
 
   getRecipe (id) {
@@ -37,39 +41,60 @@ class App extends Component {
   }
 
   render () {
-    let {recipes, recipe} = this.state
-    return recipes
+    let {tags, tag, recipe} = this.state
+    return tags
       ? <Container text>
         <Header as='h2' icon textAlign='center' color='orange'>
           <Icon name='utensils' circular />
           <Header.Content>
             Recipe Wolf
           </Header.Content>
+          <Header.Subheader>
+            What do you want to make?
+          </Header.Subheader>
         </Header>
-        <Divider hidden section />
-        {recipes && recipes.length
-          ? <Button.Group vertical color='orange' fluid widths={recipes.length}>
-            {Object.keys(recipes).map((key) => {
-              return <Button active={recipe && recipe.id === recipes[key].id} fluid key={key} onClick={() => this.getRecipe(recipes[key].id)}>
-                {recipes[key].title}
+        {tags && tags.length
+          ? <Button.Group vertical color='orange' fluid widths={tags.length}>
+            {Object.keys(tags).map((key) => {
+              return <Button active={tag && tag.id === tags[key].id} fluid key={key} onClick={() => this.getTag(tags[key].id)}>
+                {tags[key].name}
               </Button>
             })}
-          </Button.Group>
-          : <Container textAlign='center'>No recipes found.</Container>
+            </Button.Group>
+          : <Container textAlign='center'>No tags found.</Container>
         }
-        <Divider section />
-        {recipe &&
-          <Container>
-            <Header as='h2'>{recipe.title}</Header>
-            {recipe.estimated_time && <p>{recipe.estimated_time} minutes</p>}
-            {recipe.ingredients &&
-              <Segment.Group>
-                {recipe.ingredients.map((ingredient, i) => <Segment key={i}>{ingredient.name}</Segment>)}
-              </Segment.Group>
-            }
-            {recipe.instructions && <p>{recipe.instructions}</p>}
+        {tag
+          ? <Container>
+              <Divider section />
+              <Header as='h2'>{tag.name}</Header>
+              {tag.recipes && tag.recipes.length
+                  ? <Button.Group vertical color='orange' fluid widths={tag.recipes.length}>
+                    {Object.keys(tag.recipes).map((key) => {
+                      return <Button active={tag.recipes && tag.recipes.id === tag.recipes[key].id} fluid key={key} onClick={() => this.getRecipe(tag.recipes[key].id)}>
+                        {tag.recipes[key].title}
+                      </Button>
+                    })}
+                  </Button.Group>
+                  : <p>No recipes found tagged <strong>{tag.name}</strong></p>
+              }
+            </Container>
+          : <Divider hidden section />
+        }
+      {recipe
+          ?<Container>
+              <Divider section />
+              <Header as='h2'>{recipe.title}</Header>
+              {recipe.estimated_time && <em>Estimated Time: {recipe.estimated_time} minutes</em>}
+              {recipe.ingredients && recipe.ingredients.length
+                  ? <Segment.Group>
+                    {recipe.ingredients.map((ingredient, i) => <Segment key={i}>{ingredient.name}</Segment>)}
+                    </Segment.Group>
+                  : <Segment>No Ingredients</Segment>
+              }
+              {recipe.instructions && <p>{recipe.instructions}</p>}
           </Container>
-        }
+          : <Divider hidden section />
+      }
       </Container>
       : <Container text>
         <Dimmer active inverted>
