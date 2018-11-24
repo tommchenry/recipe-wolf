@@ -2,7 +2,7 @@
 #
 # Table name: recipes
 #
-#  id             :integer          not null, primary key
+#  id             :bigint(8)        not null, primary key
 #  title          :string
 #  estimated_time :integer
 #  instructions   :text
